@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+"django-debug-toolbar" = "*"
+
+
+[packages]
+django = "==1.11.5"
+"psycopg2" = "*"
+
+
+
+[requires]
+python_version = "3.4"
