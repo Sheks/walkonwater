@@ -1,0 +1,29 @@
+version: "3"
+services:
+  db:
+    image: postgres
+  walkonwater:
+    restart: always
+    image: sheksvm/walkonwater:stable
+    environment:
+      - LOG_LEVEL=INFO
+      - ALLOWED_HOSTS=
+    command:
+      - --http
+      - :80
+      - --module
+      - wsgi:application
+      - --ini
+      - /etc/uwsgi/sites/walkonwater.ini
+    depends_on:
+      - db
+    labels:
+      io.rancher.container.hostname_override: container_name
+  walkonwater-server-lb:
+    image: rancher/lb-service-haproxy:v0.7.11
+    ports:
+      - 80:80
+    labels:
+      io.rancher.scheduler.global: 'true'
+      io.rancher.container.agent.role: environmentAdmin
+      io.rancher.container.create_agent: 'true'
