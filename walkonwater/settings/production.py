@@ -14,7 +14,7 @@ SECRET_KEY = 'n1f*^344@=c_$^&u_#$-r_ty5(y_6a=jm&jzao@@j#qqj+d_ev'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -26,11 +26,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 'oauth2_provider',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'main'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -68,7 +73,7 @@ DATABASES = {
         'NAME': 'walkonwater',  # os.path.join(BASE_DIR, 'db.sqlite3'),
         'USER': 'walkonwater',
         'PASSWORD': '1q2w3ewalk',
-        'HOST': 'localhost'
+        'HOST': 'db'
     }
 }
 
@@ -109,3 +114,82 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+# rest framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework_json_api.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework_json_api.parsers.JSONParser',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        # 'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        # 'rest_framework.permissions.IsAuthenticated',
+        'main.api.v1.permissions.DjangoModelViewPermissions',
+    )
+}
+
+
+SERVER_LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
+# Logger settings
+LOGGING = {
+    'version': 1,
+    'formatters': {
+        'json': {
+            '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',
+            'format': '%(origin)s %(version)s %(levelname)s %(message)s'
+        },
+    },
+    'filters': {
+        'app_info': {
+            '()': 'monitoring.log.AppInfoContextFilter',
+        }
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'json',
+            'filters': ['app_info'],
+        },
+    },
+    'loggers': {
+        'walkonwater': {
+            'handlers': ['console'],
+            'level': SERVER_LOG_LEVEL,
+            'propagate': False,
+        },
+        '': {
+            'handlers': ['console'],
+            'level': SERVER_LOG_LEVEL,
+        },
+
+    }
+}
+
+# django-cors-headers
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^.*/api/v\d/.*$'
+CORS_ALLOW_HEADERS = (
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+)
+
+# oauth2
+# OAUTH2_PROVIDER = {
+#     'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 'groups': 'Access to your groups'},
+#     'ACCESS_TOKEN_EXPIRE_SECONDS': 7 * 24 * 60 * 60
+# }

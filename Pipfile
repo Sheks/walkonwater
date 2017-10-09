@@ -10,8 +10,13 @@ name = "pypi"
 [packages]
 django = "==1.11.5"
 "psycopg2" = "*"
-
-
+djangorestframework = "==3.6.4"
+"python-json-logger" = "*"
+setuptools = "*"
+uwsgi = "*"
+"djangorestframework-jsonapi" = "==2.2.0"
+"drf-nested-routers" = "==0.90"
+"django-cors-headers" = "==2.1.0"
 
 [requires]
 python_version = "3.4"
